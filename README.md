@@ -1,17 +1,20 @@
-# shoqandafinview
+# 🛍️ Shaqandah E-commerce App
 
-A new Flutter project.
+A professional full-stack shopping experience built with **Flutter**, focusing on **Clean Architecture** and high performance.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 🌟 Project Highlights
+- **Architecture:** Clean Architecture (Data, Domain, Presentation).
+- **State Management:** BLoC / Cubit for scalable state handling.
+- **Design:** Modern & Intuitive UI/UX (Pixel-perfect execution).
+- **Merchant Version:** Dedicated dashboard for product and order management.
 
-A few resources to get you started if this is your first Flutter project:
+## 🚀 Technical Features
+- Efficient API integration / Firebase.
+- Clean folder structure for team collaboration.
+- Highly maintainable and testable code.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+### 👩‍💻 Developed by Nehad Ali
+*UI/UX Designer & Mobile Application Developer*
