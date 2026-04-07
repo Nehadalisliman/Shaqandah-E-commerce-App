@@ -1,0 +1,90 @@
+{
+  "project_info": {
+    "project_number": "785136091962",
+    "project_id": "shoqandaaa",
+    "storage_bucket": "shoqandaaa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785136091962:android:4c175c013de3a8da8c8603",
+        "android_client_info": {
+          "package_name": "com.example.shoqandaa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785136091962-59vdhgrpsn1aidiojbrn0ljcdt1kpfck.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.shoqandaa",
+            "certificate_hash": "01d6153fb0de6284d548e597f7716dd908b4f594"
+          }
+        },
+        {
+          "client_id": "785136091962-eoo7c9u433u69mnbaqrop22c3klrqabn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC068IgxGzvXh9uAt-U-Tz_viHGa69kiGE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785136091962-eoo7c9u433u69mnbaqrop22c3klrqabn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785136091962-sf679bal0r377ha5j29m35f42gp2buke.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.shoqandafinview"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:785136091962:android:0acb92f8aa40e8778c8603",
+        "android_client_info": {
+          "package_name": "com.example.shoqandafinview"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "785136091962-eoo7c9u433u69mnbaqrop22c3klrqabn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC068IgxGzvXh9uAt-U-Tz_viHGa69kiGE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "785136091962-eoo7c9u433u69mnbaqrop22c3klrqabn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "785136091962-sf679bal0r377ha5j29m35f42gp2buke.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.shoqandafinview"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

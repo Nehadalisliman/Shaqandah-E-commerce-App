@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Shaqandah E-commerce Application">
+
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="shoqandafinview">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>Shaqandah</title>
+  <link rel="manifest" href="manifest.json">
+
+  <meta name="flutter-web-renderer" content="html">
+</head>
+<body>
+
+<script>
+  // ✅ تخصيص الـ Renderer ليكون HTML لضمان ظهور الصور
+  window.addEventListener('load', function(ev) {
+    _flutter.loader.loadEntrypoint({
+      serviceWorker: {
+        serviceWorkerVersion: serviceWorkerVersion,
+      },
+      onEntrypointLoaded: function(engineInitializer) {
+        engineInitializer.initializeEngine({
+          // إجبار المتصفح على استخدام محرك HTML بدلاً من CanvasKit
+          // هذا الخيار هو الحل السحري لمشاكل الـ CORS وصور الفايربيز
+          renderer: "html"
+        }).then(function(appRunner) {
+          appRunner.runApp();
+        });
+      }
+    });
+  });
+</script>
+
+<script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
