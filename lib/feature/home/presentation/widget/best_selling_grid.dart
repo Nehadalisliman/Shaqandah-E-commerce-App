@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../domain/entites/product_entity.dart';
 import 'product_card.dart';
 
-// ✅ استدعاء مشروط ذكي: للموبايل يستخدم الـ stub وللويب يستخدم ملف الـ web
+// ✅ استدعاء الـ Loader المعزول لتجنب أخطاء بناء الـ APK
 import 'package:shoqandafinview/core/utils/web_loader_stub.dart'
 if (dart.library.js_interop) 'package:shoqandafinview/core/utils/web_loader_web.dart'
 as loader;
@@ -20,7 +20,6 @@ class BestSellingGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. عرض حالة القائمة الفارغة بتنسيق Cairo المتوافق مع هوية "شقندة"
     if (products.isEmpty) {
       return Center(
         child: Padding(
@@ -45,27 +44,27 @@ class BestSellingGrid extends StatelessWidget {
       );
     }
 
-    // 2. عرض شبكة المنتجات (Grid) بتصميم متجاوب
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: products.length,
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         mainAxisSpacing: 16.h,
         crossAxisSpacing: 12.w,
-        childAspectRatio: 0.65, // متناسب مع أحجام الشاشات المختلفة لضمان ظهور المحتوى
+        childAspectRatio: 0.65,
       ),
       itemBuilder: (context, index) {
         final product = products[index];
 
-        return InkWell(
-          // ✅ تم التعديل من id إلى productId ليتوافق مع الـ Entity الجديد الخاص بكِ
-          onTap: () => onProductTap(product.productId),
-          borderRadius: BorderRadius.circular(12.r),
-          child: ProductCard(
-            product: product,
-          ),
+        // ✅ تسجيل صورة المنتج للويب باستخدام الـ viewId الفريد (CORS Solution)
+        loader.registerWebView('prod-${product.productId}', product.mainImage);
+
+        return ProductCard(
+          product: product,
+          // ✅ تمرير الـ HtmlElementView لاستخدامه في الويب
+          imageWidget: HtmlElementView(viewType: 'prod-${product.productId}'),
         );
       },
     );

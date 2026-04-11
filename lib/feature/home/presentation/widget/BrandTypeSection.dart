@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
-// ✅ تم حذف مكتبات الـ Web نهائياً لضمان بناء الـ APK
+// ✅ الـ Loader المعزول لحماية الموبايل من أخطاء الويب
+import 'package:shoqandafinview/core/utils/web_loader_stub.dart'
+if (dart.library.js_interop) 'package:shoqandafinview/core/utils/web_loader_web.dart'
+as loader;
+
 import '../../domain/entites/brand_type_entity.dart';
 import '../manager/home_cubit.dart';
 import 'brand_type_card.dart';
@@ -19,8 +22,6 @@ class BrandTypeSection extends StatefulWidget {
 
 class _BrandTypeSectionState extends State<BrandTypeSection> {
   int selectedIndex = 0;
-
-  // ✅ تم حذف دالة _registerBrandImages وكل ما يتعلق بـ platformViewRegistry
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,7 @@ class _BrandTypeSectionState extends State<BrandTypeSection> {
         ),
         SizedBox(height: 12.h),
         SizedBox(
-          height: 50.h, // تعديل الارتفاع ليتناسب مع الكروت الجديدة
+          height: 60.h,
           child: ListView.separated(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             scrollDirection: Axis.horizontal,
@@ -52,20 +53,31 @@ class _BrandTypeSectionState extends State<BrandTypeSection> {
             itemBuilder: (context, index) {
               final type = widget.brandTypes[index];
 
-              return BrandTypeCard(
-                title: type.typeName,
-                // ✅ نمرر الرابط مباشرة والـ BrandTypeCard هو اللي هيعرضه بـ Image.network
-                imageUrl: type.typeImage,
-                isSelected: selectedIndex == index,
-                onTap: () {
-                  setState(() {
-                    selectedIndex = index;
-                  });
+              // ✅ تسجيل صورة البراند للويب بطريقة آمنة تماماً للموبايل
+              loader.registerWebView('brand-${type.id}', type.typeImage);
 
-                  context.read<HomeCubit>().fetchHomeData(
-                    brandTypeId: type.id,
-                  );
-                },
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(12.r),
+                child: BrandTypeCard(
+                  title: type.typeName,
+                  imageUrl: type.typeImage,
+                  isSelected: selectedIndex == index,
+                  // ✅ تمرير الـ HtmlElementView فقط في حالة الويب
+                  webImage: SizedBox(
+                    width: 40.w,
+                    height: 40.h,
+                    child: HtmlElementView(viewType: 'brand-${type.id}'),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      selectedIndex = index;
+                    });
+
+                    context.read<HomeCubit>().fetchHomeData(
+                      brandTypeId: type.id,
+                    );
+                  },
+                ),
               );
             },
           ),

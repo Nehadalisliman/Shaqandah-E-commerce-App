@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
-// ✅ تم حذف dart:ui_web و dart:html نهائياً لضمان بناء الـ APK بنجاح
+// ✅ الـ Loader المعزول (استخدامه فقط يمنع الـ Build Errors)
+import 'package:shoqandafinview/core/utils/web_loader_stub.dart'
+if (dart.library.js_interop) 'package:shoqandafinview/core/utils/web_loader_web.dart'
+as loader;
+
 import '../../domain/entites/CategoryEntity.dart';
 import '../manager/home_cubit.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class CategoriesListSection extends StatelessWidget {
   final List<CategoryEntity> categories;
@@ -14,8 +18,6 @@ class CategoriesListSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ❌ تم حذف حلقة الـ for الخاصة بـ platformViewRegistry لأنها مخصصة للويب فقط وتسبب أخطاء في الأندرويد
-
     if (categories.isEmpty) return const SizedBox.shrink();
 
     return Column(
@@ -33,8 +35,9 @@ class CategoriesListSection extends StatelessWidget {
           ),
         ),
         SizedBox(height: 15.h),
+
         SizedBox(
-          height: 110.h, // تعديل الارتفاع ليتناسب مع التصميم الدائري
+          height: 115.h,
           child: ListView.builder(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             scrollDirection: Axis.horizontal,
@@ -43,6 +46,9 @@ class CategoriesListSection extends StatelessWidget {
             itemBuilder: (context, index) {
               final category = categories[index];
 
+              // ✅ استخدام الدالة المعزولة لتسجيل الصور (آمنة للأندرويد)
+              loader.registerWebView('cat-${category.categoryId}', category.categoryImage);
+
               return GestureDetector(
                 onTap: () {
                   context.read<HomeCubit>().fetchHomeData(
@@ -50,7 +56,7 @@ class CategoriesListSection extends StatelessWidget {
                   );
                 },
                 child: Padding(
-                  padding: EdgeInsets.only(left: 16.w), // تعديل الحشو ليتناسب مع الاتجاه العربي
+                  padding: EdgeInsets.only(left: 16.w),
                   child: Column(
                     children: [
                       Container(
@@ -72,28 +78,28 @@ class CategoriesListSection extends StatelessWidget {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(34.r),
-                          // ✅ استخدام Image.network بدلاً من HtmlElementView
-                          child: Image.network(
-                            category.categoryImage,
-                            fit: BoxFit.cover,
-                            // معالجة حالة التحميل
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  value: loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                      loadingProgress.expectedTotalBytes!
-                                      : null,
+                          child: Stack(
+                            children: [
+                              SizedBox.expand(
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    // التحقق لو إحنا ويب بطريقة لا تكسر الموبايل
+                                    if (identical(0, 0.0)) {
+                                      return HtmlElementView(viewType: 'cat-${category.categoryId}');
+                                    }
+
+                                    return CachedNetworkImage(
+                                      imageUrl: category.categoryImage,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => const Center(
+                                        child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFFD4AF37)),
+                                      ),
+                                      errorWidget: (context, url, error) => Icon(Icons.category_outlined, size: 30.r),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
-                            // معالجة حالة الخطأ (مثل انقطاع الإنترنت)
-                            errorBuilder: (context, error, stackTrace) => Container(
-                              color: Colors.grey[200],
-                              child: Icon(Icons.category, color: Colors.grey, size: 30.r),
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),

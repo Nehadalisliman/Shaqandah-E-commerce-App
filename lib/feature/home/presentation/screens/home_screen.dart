@@ -3,14 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+// ✅ الـ Loader المعزول (هو الوحيد المسموح به)
+import 'package:shoqandafinview/core/utils/web_loader_stub.dart'
+if (dart.library.js_interop) 'package:shoqandafinview/core/utils/web_loader_web.dart'
+as loader;
+
 import '../../../../core/navigation/app_router.dart';
 import '../manager/home_cubit.dart';
 import '../manager/home_state.dart';
 import '../widget/BrandTypeSection.dart';
 import '../widget/best_selling_grid.dart';
 import '../widget/categories_list_section.dart';
-
-// ✅ تم حذف جميع مكتبات الـ Web والـ kIsWeb لضمان بناء الـ APK بنجاح
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -48,22 +51,13 @@ class _HomeScreenState extends State<HomeScreen> {
               child: CircularProgressIndicator(color: Color(0xFFD4AF37)),
             );
           } else if (state is HomeError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(state.errMessage),
-                  ElevatedButton(
-                    onPressed: () => context.read<HomeCubit>().fetchHomeData(),
-                    child: const Text("إعادة المحاولة"),
-                  )
-                ],
-              ),
-            );
+            return _buildErrorState(state);
           } else if (state is HomeSuccess) {
 
-            // ❌ تم حذف شرط if (kIsWeb) وعملية تسجيل الصور تماماً
-            // لأننا اعتمدنا الآن على Image.network في كل الكروت (Widgets)
+            // ✅ تسجيل صور المنتجات للويب بطريقة معزولة وآمنة للموبايل
+            for (var product in state.products) {
+              loader.registerWebView('img-${product.productId}', product.mainImage);
+            }
 
             return RefreshIndicator(
               onRefresh: () async => context.read<HomeCubit>().fetchHomeData(),
@@ -96,7 +90,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(height: 25.h),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: _buildSectionHeader("الأكثر مبيعاً"),
+                      child: Text(
+                        "الأكثر مبيعاً",
+                        style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
+                      ),
                     ),
 
                     SizedBox(height: 10.h),
@@ -125,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // --- دوال الـ UI المساعدة ---
+  // --- الدوال المساعدة (Helper Methods) لضمان عدم وجود Error ---
 
   Widget _buildSearchField() => TextField(
     decoration: InputDecoration(
@@ -155,9 +152,17 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   );
 
-  Widget _buildSectionHeader(String title) => Text(
-    title,
-    style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
+  Widget _buildErrorState(HomeError state) => Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(state.errMessage, style: const TextStyle(fontFamily: 'Cairo')),
+        ElevatedButton(
+          onPressed: () => context.read<HomeCubit>().fetchHomeData(),
+          child: const Text("إعادة المحاولة"),
+        )
+      ],
+    ),
   );
 
   Widget _buildBottomNav() => BottomNavigationBar(
